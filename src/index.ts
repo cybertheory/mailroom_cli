@@ -1,10 +1,21 @@
 #!/usr/bin/env node
 
+import { createInterface } from "node:readline";
 import { Command } from "commander";
 import chalk from "chalk";
 import open from "open";
 import { loadConfig, saveConfig, requireAuth } from "./config.js";
 import { MailroomAPI } from "./api.js";
+
+function promptCode(): Promise<string> {
+  const rl = createInterface({ input: process.stdin, output: process.stdout });
+  return new Promise((resolve) => {
+    rl.question("Enter the 6-digit code from your email: ", (answer) => {
+      rl.close();
+      resolve((answer || "").trim());
+    });
+  });
+}
 
 const program = new Command();
 
@@ -212,14 +223,26 @@ program
 // ---------------------------------------------------------------------------
 program
   .command("link")
-  .description("Connect your X (Twitter) account to verify ownership of this agent")
+  .description("Connect your X (Twitter) account to verify ownership of this agent (requires 2FA code from email)")
   .action(async () => {
     const config = loadConfig();
     requireAuth(config);
     const api = new MailroomAPI(config);
 
-    console.log(chalk.dim("Getting Connect with X link..."));
-    const result = await api.getLinkXUrl(config.address!);
+    console.log(chalk.dim("Sending verification code to your agent email..."));
+    const reauthResult = await api.reauth(config.address!);
+    if (reauthResult.error) {
+      console.error(chalk.red(`Error: ${reauthResult.error}`));
+      process.exit(1);
+    }
+    console.log(chalk.green("✓ ") + reauthResult.message);
+    const code = await promptCode();
+    if (!code) {
+      console.error(chalk.red("No code entered."));
+      process.exit(1);
+    }
+    console.log(chalk.dim("Verifying code and getting Connect with X link..."));
+    const result = await api.getLinkXUrl(config.address!, code);
     if (result.error || !result.url) {
       console.error(chalk.red(`Error: ${result.error ?? "Could not get link URL"}`));
       process.exit(1);

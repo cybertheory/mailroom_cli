@@ -114,11 +114,12 @@ export class MailroomAPI {
     }
   }
 
-  /** Get one-time URL to open in browser for "Connect with X" flow. */
-  async getLinkXUrl(address: string): Promise<{ url: string; error?: string }> {
+  /** Get one-time URL to open in browser for "Connect with X" flow. Requires 2FA code from agent's email. */
+  async getLinkXUrl(address: string, code: string): Promise<{ url: string; error?: string }> {
     const res = await fetch(`${this.baseUrl}/api/agents/${encodeURIComponent(address)}/link-x/start`, {
       method: "POST",
       headers: this.headers(true),
+      body: JSON.stringify({ code }),
     });
     const text = await res.text();
     let data: { url?: string; error?: string };
