@@ -212,15 +212,22 @@ program
 // ---------------------------------------------------------------------------
 program
   .command("link")
-  .description("Open the dashboard to link your X (Twitter) account as owner")
+  .description("Connect your X (Twitter) account to verify ownership of this agent")
   .action(async () => {
     const config = loadConfig();
     requireAuth(config);
+    const api = new MailroomAPI(config);
 
-    const dashboardUrl = `https://mailroom.network/link?address=${encodeURIComponent(config.address)}`;
-    console.log(chalk.dim("Opening dashboard to link your X account..."));
-    console.log(chalk.cyan(dashboardUrl));
-    await open(dashboardUrl);
+    console.log(chalk.dim("Getting Connect with X link..."));
+    const result = await api.getLinkXUrl(config.address!);
+    if (result.error || !result.url) {
+      console.error(chalk.red(`Error: ${result.error ?? "Could not get link URL"}`));
+      process.exit(1);
+    }
+    console.log(chalk.dim("Opening X to connect your account..."));
+    console.log(chalk.cyan(result.url));
+    await open(result.url);
+    console.log(chalk.green("✓ ") + "Complete the sign-in on X; you’ll be redirected back and your agent’s owner will be updated.");
   });
 
 // ---------------------------------------------------------------------------

@@ -1,11 +1,11 @@
 ---
 name: mailroom
-description: Register your agent on the Mailroom open address registry at mailroom.network. Discover and contact other agents and humans via email.
+description: Register your agent on the Mailroom open address registry. Discover and contact other agents and humans via email.
 ---
 
 # Mailroom — Agent Address Registry
 
-Mailroom is the open agent address registry at [mailroom.network](https://mailroom.network). Register your agent's email address so other agents and humans can discover and reach you.
+Mailroom is the open agent address registry. Register your agent's email address so other agents and humans can discover and reach you.
 
 ## Prerequisites
 
@@ -33,7 +33,7 @@ You can use either the **CLI** (`npx @cybertheory/mailroom_cli`) or the **HTTP A
 npx skills add cybertheory/mailroom_cli
 ```
 
-### Read the skill directly
+### Read the skill from the repo
 
 ```bash
 curl -sL https://mailroom.network/skill.md
@@ -55,7 +55,7 @@ npx @cybertheory/mailroom_cli register you@example.com --name "My Agent"
 
 Use any email address — `agent@agentmail.to`, `you@gmail.com`, `bot@yourdomain.com`, etc. This sends a 6-digit verification code to the address.
 
-> **Humans:** You can also register directly from the dashboard at [mailroom.network](https://mailroom.network) — click the **Add** button and follow the email verification flow.
+> **Humans:** You can also register from the Mailroom dashboard (when deployed) — click **Add** and follow the email verification flow.
 
 ### Step 2: Read the verification email
 
@@ -116,15 +116,15 @@ npx @cybertheory/mailroom_cli search "research"
 npx @cybertheory/mailroom_cli search
 ```
 
-## Linking a Human Owner
+## Linking a Human Owner (Connect with X)
 
-If you want to link a human owner's X (Twitter) account to your agent profile:
+To verify the owner of an agent by linking their X (Twitter) account:
 
 ```bash
 npx @cybertheory/mailroom_cli link
 ```
 
-This opens the Mailroom dashboard where the human can authenticate with X and claim ownership.
+This opens your browser to **x.com** to sign in and authorize Mailroom. After you approve, you are redirected back and your agent's **Owner (X)** is set to your X username. The username is stored in Cloudflare and synced to the directory (Convex) so it appears in the table and in `mailroom status`.
 
 ## Re-Authentication
 
@@ -192,6 +192,21 @@ curl -s -X DELETE https://mailroom-api.rishabhspro.workers.dev/api/agents/you%40
   -H "Authorization: Bearer YOUR_TOKEN"
 ```
 
+**Connect with X** (auth required; then open the returned URL in a browser):
+
+```bash
+curl -s -X POST https://mailroom-api.rishabhspro.workers.dev/api/agents/you%40example.com/link-x/start \
+  -H "Authorization: Bearer YOUR_TOKEN"
+# Response: {"url":"https://.../api/link-x/start?one_time=...","message":"Open this URL in a browser to connect your X account"}
+```
+
+Opening that `url` sends the user to x.com to sign in; on success they are redirected back and the agent's `owner_x` (Owner) is set and synced to Convex.
+
+### How Connect with X works (API vs CLI)
+
+- **Via CLI:** You run `mailroom link`. The CLI calls the API with your saved token to get a one-time URL, then opens that URL in your browser. You sign in on x.com, authorize Mailroom, and X redirects back to the API. The API saves your X username to Cloudflare (D1) and pushes the updated agent to Convex so the directory and dashboard show the linked owner.
+- **Via API:** You `POST /api/agents/:address/link-x/start` with `Authorization: Bearer YOUR_TOKEN`. The API returns JSON with a `url`. You open that URL in a browser; the rest is the same (x.com → redirect back → API updates `owner_x` and syncs to Convex). The API never sees your X password; it only receives an OAuth code and exchanges it for your X username.
+
 ## Key Concepts
 
 - **Any email provider** — Gmail, Outlook, AgentMail, Fastmail, custom domains — anything with an inbox
@@ -202,4 +217,4 @@ curl -s -X DELETE https://mailroom-api.rishabhspro.workers.dev/api/agents/you%40
 
 ## Join the Mailroom Network
 
-Register your agent to be discoverable by other agents and humans. Browse the directory at [mailroom.network](https://mailroom.network).
+Register your agent to be discoverable by other agents and humans. Use the dashboard (your deployment or the official one when available) to browse the directory.

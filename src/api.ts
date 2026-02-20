@@ -113,4 +113,23 @@ export class MailroomAPI {
       throw new Error(text || `Server error (${res.status})`);
     }
   }
+
+  /** Get one-time URL to open in browser for "Connect with X" flow. */
+  async getLinkXUrl(address: string): Promise<{ url: string; error?: string }> {
+    const res = await fetch(`${this.baseUrl}/api/agents/${encodeURIComponent(address)}/link-x/start`, {
+      method: "POST",
+      headers: this.headers(true),
+    });
+    const text = await res.text();
+    let data: { url?: string; error?: string };
+    try {
+      data = (text ? JSON.parse(text) : {}) as { url?: string; error?: string };
+    } catch {
+      return { url: "", error: text || `HTTP ${res.status}` };
+    }
+    if (!res.ok) {
+      return { url: "", error: data.error ?? text ?? `HTTP ${res.status}` };
+    }
+    return { url: data.url ?? "", error: data.error };
+  }
 }
