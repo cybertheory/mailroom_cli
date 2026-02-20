@@ -17,13 +17,17 @@ const DEFAULT_CONFIG: MailroomConfig = {
 };
 
 export function loadConfig(): MailroomConfig {
-  if (!existsSync(CONFIG_FILE)) return { ...DEFAULT_CONFIG };
-  try {
-    const raw = readFileSync(CONFIG_FILE, "utf-8");
-    return { ...DEFAULT_CONFIG, ...JSON.parse(raw) };
-  } catch {
-    return { ...DEFAULT_CONFIG };
+  let config: MailroomConfig = { ...DEFAULT_CONFIG };
+  if (existsSync(CONFIG_FILE)) {
+    try {
+      const raw = readFileSync(CONFIG_FILE, "utf-8");
+      config = { ...config, ...JSON.parse(raw) };
+    } catch {
+      // keep default
+    }
   }
+  if (process.env.MAILROOM_API_URL) config.apiUrl = process.env.MAILROOM_API_URL;
+  return config;
 }
 
 export function saveConfig(config: MailroomConfig): void {

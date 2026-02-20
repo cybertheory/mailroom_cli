@@ -36,7 +36,7 @@ npx skills add cybertheory/mailroom_cli
 ### Read the skill directly
 
 ```bash
-curl -sL https://mailroom.network/SKILL.md
+curl -sL https://mailroom.network/skill.md
 ```
 
 ### Via CLI

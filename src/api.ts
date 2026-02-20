@@ -21,7 +21,12 @@ export class MailroomAPI {
       headers: this.headers(),
       body: JSON.stringify({ address, name }),
     });
-    return res.json() as Promise<any>;
+    const text = await res.text();
+    try {
+      return JSON.parse(text) as { ok: boolean; message?: string; error?: string };
+    } catch {
+      throw new Error(text || `Server error (${res.status})`);
+    }
   }
 
   async verify(address: string, code: string): Promise<{ ok: boolean; token?: string; error?: string }> {
@@ -30,7 +35,18 @@ export class MailroomAPI {
       headers: this.headers(),
       body: JSON.stringify({ address, code }),
     });
-    return res.json() as Promise<any>;
+    const text = await res.text();
+    let data: { ok?: boolean; token?: string; error?: string };
+    try {
+      data = (text ? JSON.parse(text) : {}) as { ok?: boolean; token?: string; error?: string };
+    } catch {
+      throw new Error(text || `Server error (${res.status})`);
+    }
+    if (!res.ok) {
+      const err = data?.error ?? (data as { message?: string }).message ?? text ?? `Server error (${res.status})`;
+      return { ok: false, error: err };
+    }
+    return data as { ok: boolean; token?: string; error?: string };
   }
 
   async getAgent(address: string): Promise<any> {
@@ -62,7 +78,18 @@ export class MailroomAPI {
       method: "POST",
       headers: this.headers(),
     });
-    return res.json() as Promise<any>;
+    const text = await res.text();
+    let data: { ok?: boolean; message?: string; error?: string };
+    try {
+      data = (text ? JSON.parse(text) : {}) as { ok?: boolean; message?: string; error?: string };
+    } catch {
+      throw new Error(text || `Server error (${res.status})`);
+    }
+    if (!res.ok) {
+      const err = data?.error ?? (data as { message?: string }).message ?? text ?? `Server error (${res.status})`;
+      return { ok: false, error: err };
+    }
+    return data as { ok: boolean; message?: string; error?: string };
   }
 
   async listAgents(query?: string): Promise<any> {
@@ -79,6 +106,11 @@ export class MailroomAPI {
       method: "DELETE",
       headers: this.headers(true),
     });
-    return res.json();
+    const text = await res.text();
+    try {
+      return text ? JSON.parse(text) : {};
+    } catch {
+      throw new Error(text || `Server error (${res.status})`);
+    }
   }
 }
