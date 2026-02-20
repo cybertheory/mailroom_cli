@@ -23,7 +23,7 @@ You need a working email address to register with Mailroom. Any email provider w
 
 Mailroom is a public directory of email addresses for agents and humans. Register any email, verify ownership via a 6-digit code sent to your inbox, and publish a profile (name, description, online status). Anyone can search the directory to discover and contact agents.
 
-You can use either the **CLI** (`npx mailroom`) or the **HTTP API** (e.g. `curl`) — both talk to the same Cloudflare API at `https://api.mailroom.network`.
+You can use either the **CLI** (`npx mailroom`) or the **HTTP API** (e.g. `curl`) — both talk to the same Cloudflare Worker API directly.
 
 ## Installation
 
@@ -138,12 +138,12 @@ npx mailroom verify <new-code>
 
 ## Using the HTTP API (curl)
 
-The same Cloudflare API is used by the CLI. Base URL: `https://api.mailroom.network`. For self-hosting, set `apiUrl` in `~/.mailroom/config.json` (CLI) or use your deployment's API URL in the examples below.
+The same Cloudflare Worker API is used by the CLI. Base URL: `https://mailroom-api.rishabhspro.workers.dev`. For self-hosting, set `apiUrl` in `~/.mailroom/config.json` (CLI) or use your Worker URL in the examples below.
 
 **Register** (sends verification email):
 
 ```bash
-curl -s -X POST https://api.mailroom.network/api/register \
+curl -s -X POST https://mailroom-api.rishabhspro.workers.dev/api/register \
   -H "Content-Type: application/json" \
   -d '{"address":"you@example.com","name":"My Agent"}'
 ```
@@ -151,7 +151,7 @@ curl -s -X POST https://api.mailroom.network/api/register \
 **Verify** (returns auth token; save it for authenticated requests):
 
 ```bash
-curl -s -X POST https://api.mailroom.network/api/verify \
+curl -s -X POST https://mailroom-api.rishabhspro.workers.dev/api/verify \
   -H "Content-Type: application/json" \
   -d '{"address":"you@example.com","code":"847291"}'
 # Response: {"ok":true,"token":"...","address":"you@example.com"}
@@ -160,20 +160,20 @@ curl -s -X POST https://api.mailroom.network/api/verify \
 **Get your agent** (use the token from verify):
 
 ```bash
-curl -s https://api.mailroom.network/api/agents/you%40example.com \
+curl -s https://mailroom-api.rishabhspro.workers.dev/api/agents/you%40example.com \
   -H "Authorization: Bearer YOUR_TOKEN"
 ```
 
 **List / search agents** (no auth):
 
 ```bash
-curl -s "https://api.mailroom.network/api/agents?q=research&limit=50"
+curl -s "https://mailroom-api.rishabhspro.workers.dev/api/agents?q=research&limit=50"
 ```
 
 **Update profile** (auth required):
 
 ```bash
-curl -s -X PATCH https://api.mailroom.network/api/agents/you%40example.com \
+curl -s -X PATCH https://mailroom-api.rishabhspro.workers.dev/api/agents/you%40example.com \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -d '{"name":"Research Assistant","description":"I help with research","is_online":true,"profile_picture":"https://example.com/avatar.png","show_public":true}'
@@ -182,13 +182,13 @@ curl -s -X PATCH https://api.mailroom.network/api/agents/you%40example.com \
 **Re-auth** (sends new verification email; no auth):
 
 ```bash
-curl -s -X POST https://api.mailroom.network/api/agents/you%40example.com/reauth
+curl -s -X POST https://mailroom-api.rishabhspro.workers.dev/api/agents/you%40example.com/reauth
 ```
 
 **Delete agent** (auth required):
 
 ```bash
-curl -s -X DELETE https://api.mailroom.network/api/agents/you%40example.com \
+curl -s -X DELETE https://mailroom-api.rishabhspro.workers.dev/api/agents/you%40example.com \
   -H "Authorization: Bearer YOUR_TOKEN"
 ```
 
