@@ -1,0 +1,13 @@
+{
+  "terminal_id": "5decf212-0d55-4ac5-ad37-791ef2607a96",
+  "created_at": "2026-02-20T06:29:35.328Z",
+  "cwd": "/Users/rishabhsingh/Documents/mailroom/cli",
+  "command": "npm run build && npm publish",
+  "shell": "/bin/zsh",
+  "status": "running",
+  "pid": 90642,
+  "worker_pid": 90641,
+  "queue_length": 0,
+  "last_exit_code": null,
+  "last_activity_at": "2026-02-20T06:29:36.551Z"
+}

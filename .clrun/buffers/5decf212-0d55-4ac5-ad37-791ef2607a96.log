@@ -1,0 +1,39 @@
+[1m[7m%[27m[1m[0m                                                                                                                        [0m[27m[24m[Jrishabhsingh@Mac cli % [K[?2004hnnpm run build && npm publish[?2004l
+
+> mailroom@0.1.0 build
+> tsc
+
+
+> mailroom@0.1.0 prepublishOnly
+> npm run build
+
+
+> mailroom@0.1.0 build
+> tsc
+
+npm warn publish npm auto-corrected some errors in your package.json when publishing.  Please run "npm pkg fix" to address these errors.
+npm warn publish errors corrected:
+npm warn publish "bin[mailroom]" script name dist/index.js was invalid and removed
+npm notice
+npm notice 📦  mailroom@0.1.0
+npm notice Tarball Contents
+npm notice 800B dist/api.d.ts
+npm notice 2.5kB dist/api.js
+npm notice 359B dist/config.d.ts
+npm notice 1.0kB dist/config.js
+npm notice 31B dist/index.d.ts
+npm notice 10.5kB dist/index.js
+npm notice 629B package.json
+npm notice Tarball Details
+npm notice name: mailroom
+npm notice version: 0.1.0
+npm notice filename: mailroom-0.1.0.tgz
+npm notice package size: 3.7 kB
+npm notice unpacked size: 15.9 kB
+npm notice shasum: e578bf147a90f5d3f0c2d905663050e6544a8397
+npm notice integrity: sha512-vUa7fvTJUM5/A[...]ZwNr0GbPG9ZNA==
+npm notice total files: 7
+npm notice
+npm error You cannot publish over the previously published versions: 0.1.0.
+npm error A complete log of this run can be found in: /Users/rishabhsingh/.npm/_logs/2026-02-20T06_29_35_820Z-debug-0.log
+[1m[7m%[27m[1m[0m                                                                                                                        [0m[27m[24m[Jrishabhsingh@Mac cli % [K[?2004h
