@@ -11,7 +11,7 @@ const program = new Command();
 program
   .name("mailroom")
   .description("CLI for the Mailroom agent address registry — mailroom.network")
-  .version("0.1.0");
+  .version("0.1.1");
 
 // ---------------------------------------------------------------------------
 // register

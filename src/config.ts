@@ -11,6 +11,7 @@ export interface MailroomConfig {
   apiUrl: string;
 }
 
+// Cloudflare Worker API; using it directly is fine (HTTPS, same as dashboard).
 const DEFAULT_CONFIG: MailroomConfig = {
   apiUrl: "https://api.mailroom.network",
 };
